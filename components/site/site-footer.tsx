@@ -25,8 +25,9 @@ export function SiteFooter() {
           <Link href="/research" className="hover:text-foreground">Research</Link>
           <Link href="/publications" className="hover:text-foreground">Publications</Link>
           <Link href="/people" className="hover:text-foreground">People</Link>
-          <Link href="/blog" className="hover:text-foreground">Blog</Link>
-          <Link href="/notices" className="hover:text-foreground">Notices</Link>
+          <Link href="/gallery" className="hover:text-foreground">Gallery</Link>
+          <Link href="/news" className="hover:text-foreground">News</Link>
+          <Link href="/join" className="hover:text-foreground">Join</Link>
           <Link href="/contact" className="hover:text-foreground">Contact</Link>
         </nav>
       </div>

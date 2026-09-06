@@ -54,7 +54,13 @@ export type ResearchGroupDetail = ResearchGroupSummary & {
   members?: PersonRef[];
 };
 
-export type PersonCategory = "leadership" | "core" | "researcher" | "student" | "collaborator";
+export type PersonCategory = {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string | null;
+  order: number;
+};
 
 export type PersonSummary = {
   _id: string;
@@ -62,7 +68,7 @@ export type PersonSummary = {
   slug: string;
   role: string;
   affiliation?: string | null;
-  category: PersonCategory;
+  category?: PersonCategory | null;
   bio?: string | null;
   photoUrl?: string | null;
   email?: string | null;
@@ -116,4 +122,30 @@ export type SiteSettings = {
   mission?: string;
   vision?: string;
   contactEmail?: string;
+};
+
+export type GalleryImage = {
+  url: string;
+  alt: string;
+  caption?: string | null;
+  width?: number | null;
+  height?: number | null;
+  lqip?: string | null;
+};
+
+export type GalleryAlbumSummary = {
+  _id: string;
+  title: string;
+  slug: string;
+  date: string;
+  description?: string | null;
+  location?: string | null;
+  coverUrl?: string | null;
+  coverLqip?: string | null;
+  imageCount: number;
+  relatedGroup?: { title: string; slug: string } | null;
+};
+
+export type GalleryAlbumDetail = GalleryAlbumSummary & {
+  images: GalleryImage[];
 };

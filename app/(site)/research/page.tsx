@@ -6,7 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { getResearchGroups } from "@/lib/sanity/fetch";
 import type { GroupKind, ResearchGroupSummary } from "@/lib/sanity/types";
 
-export const metadata = { title: "Research — FETLAB" };
+export const metadata = {
+  title: "Research",
+  description: "Research groups, initiatives, and forums under the FETLAB umbrella.",
+  alternates: { canonical: "/research" },
+  openGraph: { title: "Research — FETLAB", description: "Research groups, initiatives, and forums under the FETLAB umbrella.", url: "/research" },
+};
 
 const KIND_LABEL: Record<GroupKind, string> = {
   group: "Research Group",

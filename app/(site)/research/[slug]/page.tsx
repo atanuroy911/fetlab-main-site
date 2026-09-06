@@ -6,6 +6,7 @@ import { Prose } from "@/components/site/prose";
 import { Avatar } from "@/components/site/avatar";
 import { PersonLinks } from "@/components/site/person-links";
 import { NoticeTypeBadge } from "@/components/site/notice-type-badge";
+import type { Metadata } from "next";
 import {
   getResearchGroupBySlug,
   getPublicationsByGroup,
@@ -20,6 +21,26 @@ const KIND_LABEL_FULL: Record<GroupKind, string> = {
   initiative: "Research / Innovation Initiative",
   forum: "Community Forum",
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const group = await getResearchGroupBySlug(slug);
+  if (!group) return { title: "Not found" };
+  return {
+    title: group.title,
+    description: group.summary,
+    alternates: { canonical: `/research/${slug}` },
+    openGraph: {
+      title: group.title,
+      description: group.summary,
+      url: `/research/${slug}`,
+    },
+  };
+}
 
 export default async function ResearchGroupPage({
   params,

@@ -46,7 +46,7 @@ export default defineType({
       name: "body",
       title: "Full details",
       type: "array",
-      of: [{ type: "block" }],
+      of: [{ type: "block" }, { type: "bodyImage" }],
     }),
     defineField({
       name: "publishedAt",

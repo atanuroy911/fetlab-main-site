@@ -10,13 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 
-const NAV_LINKS = [
+const NAV_LINKS: { href: string; label: string; match?: string[] }[] = [
   { href: "/about", label: "About" },
   { href: "/research", label: "Research" },
   { href: "/publications", label: "Publications" },
   { href: "/people", label: "People" },
-  { href: "/blog", label: "Blog" },
-  { href: "/notices", label: "Notices" },
+  { href: "/gallery", label: "Gallery" },
+  // Post and notice detail pages still live under /blog and /notices, so News
+  // stays highlighted while reading one.
+  { href: "/news", label: "News", match: ["/blog", "/notices"] },
+  { href: "/join", label: "Join" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -41,7 +44,9 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            const active = [link.href, ...(link.match ?? [])].some(
+              (path) => pathname === path || pathname.startsWith(`${path}/`)
+            );
             return (
               <Link
                 key={link.href}

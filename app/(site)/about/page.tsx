@@ -3,7 +3,12 @@ import { ModelLoop } from "@/components/site/model-loop";
 import { Reveal, RevealItem } from "@/components/site/reveal";
 import { getSiteSettings } from "@/lib/sanity/fetch";
 
-export const metadata = { title: "About — FETLAB" };
+export const metadata = {
+  title: "About",
+  description: "FETLAB is an open, multidisciplinary research, innovation, and collaboration platform. Learn about our mission, vision, and model.",
+  alternates: { canonical: "/about" },
+  openGraph: { title: "About — FETLAB", description: "FETLAB is an open, multidisciplinary research, innovation, and collaboration platform. Learn about our mission, vision, and model.", url: "/about" },
+};
 
 const PRINCIPLES = [
   {
@@ -41,18 +46,22 @@ export default async function AboutPage() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
         <Reveal className="grid gap-6 sm:grid-cols-2">
-          <RevealItem className="rounded-lg border border-border p-8">
-            <h2 className="text-sm font-medium tracking-wide text-primary uppercase">Vision</h2>
-            <p className="mt-3 font-heading text-xl leading-snug text-pretty">
-              {settings.vision}
-            </p>
-          </RevealItem>
-          <RevealItem className="rounded-lg border border-border p-8">
-            <h2 className="text-sm font-medium tracking-wide text-primary uppercase">Mission</h2>
-            <p className="mt-3 font-heading text-xl leading-snug text-pretty">
-              {settings.mission}
-            </p>
-          </RevealItem>
+          {settings.vision && (
+            <RevealItem className="rounded-lg border border-border p-8">
+              <h2 className="text-sm font-medium tracking-wide text-primary uppercase">Vision</h2>
+              <p className="mt-3 font-heading text-xl leading-snug text-pretty">
+                {settings.vision}
+              </p>
+            </RevealItem>
+          )}
+          {settings.mission && (
+            <RevealItem className="rounded-lg border border-border p-8">
+              <h2 className="text-sm font-medium tracking-wide text-primary uppercase">Mission</h2>
+              <p className="mt-3 font-heading text-xl leading-snug text-pretty">
+                {settings.mission}
+              </p>
+            </RevealItem>
+          )}
         </Reveal>
       </section>
 

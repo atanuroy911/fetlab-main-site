@@ -2,6 +2,33 @@ import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity/image";
 
+type BodyImageValue = {
+  alt?: string;
+  caption?: string;
+};
+
+function BodyImage({ value }: { value: BodyImageValue }) {
+  return (
+    <figure className="mt-6">
+      <span className="block overflow-hidden rounded-lg border border-border">
+        <Image
+          src={urlFor(value).width(1600).fit("max").auto("format").url()}
+          alt={value.alt ?? ""}
+          width={1600}
+          height={1000}
+          sizes="(min-width: 768px) 768px, 100vw"
+          className="h-auto w-full"
+        />
+      </span>
+      {value.caption && (
+        <figcaption className="mt-2 text-center text-sm text-muted-foreground text-pretty">
+          {value.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 const components: PortableTextComponents = {
   block: {
     h2: ({ children }) => <h2 className="mt-8 text-xl font-semibold">{children}</h2>,
@@ -13,17 +40,10 @@ const components: PortableTextComponents = {
     number: ({ children }) => <ol className="mt-4 list-decimal space-y-1 pl-5">{children}</ol>,
   },
   types: {
-    image: ({ value }) => (
-      <span className="mt-6 block overflow-hidden rounded-lg border border-border">
-        <Image
-          src={urlFor(value).width(1200).url()}
-          alt={value.alt ?? ""}
-          width={1200}
-          height={800}
-          className="h-auto w-full object-cover"
-        />
-      </span>
-    ),
+    bodyImage: ({ value }) => <BodyImage value={value} />,
+    // Images added before the `bodyImage` type existed are still plain `image`
+    // blocks and carry no alt text.
+    image: ({ value }) => <BodyImage value={value} />,
   },
 };
 

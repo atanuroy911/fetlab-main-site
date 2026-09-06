@@ -7,6 +7,7 @@ import {
   featuredResearchGroupsQuery,
   researchGroupBySlugQuery,
   peopleListQuery,
+  personCategoriesQuery,
   siteSettingsQuery,
   postsListQuery,
   recentPostsQuery,
@@ -15,18 +16,15 @@ import {
   publicationsByGroupQuery,
   postsByGroupQuery,
   noticesByGroupQuery,
+  galleryAlbumsListQuery,
+  galleryAlbumBySlugQuery,
 } from "./queries";
-import {
-  fallbackNotices,
-  fallbackPeople,
-  fallbackPosts,
-  fallbackPublications,
-  fallbackResearchGroups,
-  fallbackSiteSettings,
-} from "./fallback";
 import type {
   NoticeDetail,
   NoticeSummary,
+  GalleryAlbumDetail,
+  GalleryAlbumSummary,
+  PersonCategory,
   PersonSummary,
   PostDetail,
   PostSummary,
@@ -36,77 +34,53 @@ import type {
   SiteSettings,
 } from "./types";
 
-function fallbackGroupDetail(slug: string): ResearchGroupDetail | null {
-  const group = fallbackResearchGroups.find((g) => g.slug === slug);
-  if (!group) return null;
-  return { ...group, leaders: [], members: [] };
-}
-
-function fallbackNoticeDetail(slug: string): NoticeDetail | null {
-  const notice = fallbackNotices.find((n) => n.slug === slug);
-  if (!notice) return null;
-  return { ...notice, relatedGroup: null, applyLink: null };
-}
-
-function fallbackPostDetail(slug: string): PostDetail | null {
-  const post = fallbackPosts.find((p) => p.slug === slug);
-  if (!post) return null;
-  return { ...post, relatedGroup: null };
-}
-
-async function safeFetch<T>(query: string, params: Record<string, unknown>, fallback: T): Promise<T> {
-  if (!isSanityConfigured) return fallback;
+/**
+ * All content comes from Sanity. When the project is unconfigured or a fetch
+ * fails, callers get an empty result and render their own empty state — no
+ * placeholder content is ever shown as if it were real.
+ */
+async function safeFetch<T>(query: string, params: Record<string, unknown>, empty: T): Promise<T> {
+  if (!isSanityConfigured) return empty;
   try {
     const result = await client.fetch<T>(query, params);
-    if (result === null || (Array.isArray(result) && result.length === 0)) return fallback;
-    return result;
+    return result ?? empty;
   } catch (err) {
-    console.error("Sanity fetch failed, using fallback content:", err);
-    return fallback;
+    console.error("Sanity fetch failed:", err);
+    return empty;
   }
 }
 
-export const getSiteSettings = () =>
-  safeFetch<SiteSettings>(siteSettingsQuery, {}, fallbackSiteSettings);
+export const getSiteSettings = () => safeFetch<SiteSettings>(siteSettingsQuery, {}, {});
 
-export const getNotices = () =>
-  safeFetch<NoticeSummary[]>(noticesListQuery, {}, fallbackNotices);
+export const getNotices = () => safeFetch<NoticeSummary[]>(noticesListQuery, {}, []);
 
-export const getRecentNotices = () =>
-  safeFetch<NoticeSummary[]>(recentNoticesQuery, {}, fallbackNotices.slice(0, 3));
+export const getRecentNotices = () => safeFetch<NoticeSummary[]>(recentNoticesQuery, {}, []);
 
 export const getNoticeBySlug = (slug: string) =>
-  safeFetch<NoticeDetail | null>(noticeBySlugQuery, { slug }, fallbackNoticeDetail(slug));
+  safeFetch<NoticeDetail | null>(noticeBySlugQuery, { slug }, null);
 
 export const getResearchGroups = () =>
-  safeFetch<ResearchGroupSummary[]>(researchGroupsListQuery, {}, fallbackResearchGroups);
+  safeFetch<ResearchGroupSummary[]>(researchGroupsListQuery, {}, []);
 
 export const getFeaturedResearchGroups = () =>
-  safeFetch<ResearchGroupSummary[]>(
-    featuredResearchGroupsQuery,
-    {},
-    fallbackResearchGroups.filter((g) => g.isFeatured)
-  );
+  safeFetch<ResearchGroupSummary[]>(featuredResearchGroupsQuery, {}, []);
 
 export const getResearchGroupBySlug = (slug: string) =>
-  safeFetch<ResearchGroupDetail | null>(
-    researchGroupBySlugQuery,
-    { slug },
-    fallbackGroupDetail(slug)
-  );
+  safeFetch<ResearchGroupDetail | null>(researchGroupBySlugQuery, { slug }, null);
 
-export const getPeople = () => safeFetch<PersonSummary[]>(peopleListQuery, {}, fallbackPeople);
+export const getPeople = () => safeFetch<PersonSummary[]>(peopleListQuery, {}, []);
 
-export const getPosts = () => safeFetch<PostSummary[]>(postsListQuery, {}, fallbackPosts);
+export const getPersonCategories = () =>
+  safeFetch<PersonCategory[]>(personCategoriesQuery, {}, []);
 
-export const getRecentPosts = () =>
-  safeFetch<PostSummary[]>(recentPostsQuery, {}, fallbackPosts.slice(0, 3));
+export const getPosts = () => safeFetch<PostSummary[]>(postsListQuery, {}, []);
+
+export const getRecentPosts = () => safeFetch<PostSummary[]>(recentPostsQuery, {}, []);
 
 export const getPostBySlug = (slug: string) =>
-  safeFetch<PostDetail | null>(postBySlugQuery, { slug }, fallbackPostDetail(slug));
+  safeFetch<PostDetail | null>(postBySlugQuery, { slug }, null);
 
-export const getPublications = () =>
-  safeFetch<Publication[]>(publicationsListQuery, {}, fallbackPublications);
+export const getPublications = () => safeFetch<Publication[]>(publicationsListQuery, {}, []);
 
 export const getPublicationsByGroup = (slug: string) =>
   safeFetch<Publication[]>(publicationsByGroupQuery, { slug }, []);
@@ -116,3 +90,9 @@ export const getPostsByGroup = (slug: string) =>
 
 export const getNoticesByGroup = (slug: string) =>
   safeFetch<NoticeSummary[]>(noticesByGroupQuery, { slug }, []);
+
+export const getGalleryAlbums = () =>
+  safeFetch<GalleryAlbumSummary[]>(galleryAlbumsListQuery, {}, []);
+
+export const getGalleryAlbumBySlug = (slug: string) =>
+  safeFetch<GalleryAlbumDetail | null>(galleryAlbumBySlugQuery, { slug }, null);

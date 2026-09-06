@@ -29,16 +29,9 @@ export default defineType({
     defineField({
       name: "category",
       title: "Category",
-      type: "string",
-      options: {
-        list: [
-          { title: "Founder & Leadership", value: "leadership" },
-          { title: "Core Team", value: "core" },
-          { title: "Researcher / Faculty", value: "researcher" },
-          { title: "Student Researcher", value: "student" },
-          { title: "Collaborator", value: "collaborator" },
-        ],
-      },
+      type: "reference",
+      to: [{ type: "personCategory" }],
+      description: "Which section of the People page this person appears under.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "photo", title: "Photo", type: "image", options: { hotspot: true } }),
@@ -64,7 +57,17 @@ export default defineType({
       description: "Lower numbers appear first within a category.",
     }),
   ],
+  orderings: [
+    {
+      title: "Category, then display order",
+      name: "categoryOrder",
+      by: [
+        { field: "category.order", direction: "asc" },
+        { field: "order", direction: "asc" },
+      ],
+    },
+  ],
   preview: {
-    select: { title: "name", subtitle: "role" },
+    select: { title: "name", subtitle: "role", media: "photo" },
   },
 });

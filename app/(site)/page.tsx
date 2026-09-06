@@ -4,35 +4,39 @@ import { Button } from "@/components/ui/button";
 import {
   getFeaturedResearchGroups,
   getPeople,
-  getRecentNotices,
-  getRecentPosts,
+  getNotices,
+  getPosts,
   getPublications,
   getResearchGroups,
   getSiteSettings,
 } from "@/lib/sanity/fetch";
-import { NoticeTypeBadge } from "@/components/site/notice-type-badge";
+import { NewsKindBadge } from "@/components/site/news-kind-badge";
 import { ModelLoop } from "@/components/site/model-loop";
 import { HeroLottie } from "@/components/site/hero-lottie";
 import { Reveal, RevealItem } from "@/components/site/reveal";
 import { formatDate } from "@/lib/format-date";
+import { toNewsFeed } from "@/lib/news";
 
 export default async function HomePage() {
   const [settings, groups, allGroups, notices, posts, publications, people] = await Promise.all([
     getSiteSettings(),
     getFeaturedResearchGroups(),
     getResearchGroups(),
-    getRecentNotices(),
-    getRecentPosts(),
+    getNotices(),
+    getPosts(),
     getPublications(),
     getPeople(),
   ]);
-  const recentPublications = publications.slice(0, 3);
+  const latestNews = toNewsFeed(posts, notices).slice(0, 5);
 
+  // Only show counts we actually have — a row of zeroes reads worse than none.
   const stats = [
-    { label: "Research groups & initiatives", value: `${allGroups.length}+` },
-    { label: "People in the network", value: `${people.length}+` },
-    { label: "Founded", value: "2026" },
-  ];
+    { label: "Research groups & initiatives", value: allGroups.length },
+    { label: "People in the network", value: people.length },
+    { label: "Publications", value: publications.length },
+  ]
+    .filter((stat) => stat.value > 0)
+    .map((stat) => ({ ...stat, value: String(stat.value) }));
 
   return (
     <>
@@ -47,11 +51,15 @@ export default async function HomePage() {
                 Future &amp; Emerging Technology Laboratory
               </p>
               <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-balance sm:text-6xl">
-                <span className="text-brand-gradient">{settings.heroHeadline}</span>
+                <span className="text-brand-gradient">
+                  {settings.heroHeadline ?? "Future & Emerging Technology Laboratory"}
+                </span>
               </h1>
-              <p className="mt-6 max-w-xl text-base text-muted-foreground text-pretty sm:text-lg">
-                {settings.heroSubtext}
-              </p>
+              {settings.heroSubtext && (
+                <p className="mt-6 max-w-xl text-base text-muted-foreground text-pretty sm:text-lg">
+                  {settings.heroSubtext}
+                </p>
+              )}
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button
                   size="lg"
@@ -70,6 +78,7 @@ export default async function HomePage() {
                 />
               </div>
 
+              {stats.length > 0 && (
               <dl className="mt-12 grid grid-cols-3 gap-3 border-t border-border pt-8 sm:mt-16 sm:gap-6">
                 {stats.map((stat) => (
                   <div key={stat.label}>
@@ -80,6 +89,7 @@ export default async function HomePage() {
                   </div>
                 ))}
               </dl>
+              )}
             </div>
 
             <div className="hidden lg:block">
@@ -90,6 +100,7 @@ export default async function HomePage() {
       </section>
 
       {/* What is FETLAB */}
+      {settings.whatIsFetlab && (
       <section className="relative bg-muted/30 py-16 sm:py-20">
         <Reveal className="mx-auto max-w-6xl px-4 sm:px-6" as="section">
           <div className="grid gap-10 sm:grid-cols-[200px_1fr]">
@@ -106,6 +117,8 @@ export default async function HomePage() {
           </div>
         </Reveal>
       </section>
+
+      )}
 
       {/* The FETLAB Model */}
       <section className="relative overflow-hidden py-16 sm:py-20">
@@ -152,6 +165,11 @@ export default async function HomePage() {
               View all research →
             </Link>
           </Reveal>
+          {groups.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Research groups will appear here once published.
+            </p>
+          ) : (
           <Reveal className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {groups.map((group) => (
               <RevealItem key={group._id}>
@@ -186,6 +204,7 @@ export default async function HomePage() {
               </RevealItem>
             ))}
           </Reveal>
+          )}
           <Link
             href="/research"
             className="mt-8 block text-sm font-medium text-foreground hover:underline sm:hidden"
@@ -195,104 +214,66 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Latest from FETLAB: publications, blog, notices side by side */}
+      {/* Latest from FETLAB: one dated feed rather than three competing lists */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal className="mb-10">
+          <Reveal className="mb-10 flex items-end justify-between gap-4">
             <RevealItem>
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                 Latest from FETLAB
               </h2>
               <p className="mt-2 max-w-xl font-heading text-xl">
-                Publications, blog posts, and notices from across the network.
+                Posts, announcements, and events from across the network.
               </p>
             </RevealItem>
+            <Link
+              href="/news"
+              className="hidden shrink-0 text-sm font-medium text-foreground hover:underline sm:block"
+            >
+              View all news →
+            </Link>
           </Reveal>
 
-          <Reveal className="grid gap-8 lg:grid-cols-3">
-            {/* Publications */}
-            <RevealItem>
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-heading text-base font-semibold">Publications</h3>
-                <Link
-                  href="/publications"
-                  className="text-xs font-medium text-foreground hover:underline"
-                >
-                  View all
-                </Link>
-              </div>
-              <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-                {recentPublications.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">
-                    No publications listed yet.
-                  </p>
-                ) : (
-                  recentPublications.map((pub) => (
-                    <div key={pub._id} className="p-4">
-                      <p className="text-sm font-medium text-balance">{pub.title}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{pub.year}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </RevealItem>
-
-            {/* Blog */}
-            <RevealItem>
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-heading text-base font-semibold">Blog</h3>
-                <Link href="/blog" className="text-xs font-medium text-foreground hover:underline">
-                  View all
-                </Link>
-              </div>
-              <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-                {posts.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">No posts published yet.</p>
-                ) : (
-                  posts.map((post) => (
-                    <Link
-                      key={post._id}
-                      href={`/blog/${post.slug}`}
-                      className="p-4 transition-colors hover:bg-accent/50"
-                    >
-                      <p className="text-sm font-medium text-balance">{post.title}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {formatDate(post.publishedAt)}
-                      </p>
-                    </Link>
-                  ))
-                )}
-              </div>
-            </RevealItem>
-
-            {/* Notices */}
-            <RevealItem>
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-heading text-base font-semibold">Notices</h3>
-                <Link
-                  href="/notices"
-                  className="text-xs font-medium text-foreground hover:underline"
-                >
-                  View all
-                </Link>
-              </div>
-              <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-                {notices.map((notice) => (
+          {latestNews.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Nothing published yet.</p>
+          ) : (
+            <Reveal className="flex flex-col divide-y divide-border rounded-lg border border-border">
+              {latestNews.map((item) => (
+                <RevealItem key={item.id}>
                   <Link
-                    key={notice._id}
-                    href={`/notices/${notice.slug}`}
-                    className="flex flex-col gap-1.5 p-4 transition-colors hover:bg-accent/50"
+                    href={item.href}
+                    className="flex flex-col gap-2 p-5 transition-colors hover:bg-accent/50 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
                   >
-                    <NoticeTypeBadge type={notice.type} />
-                    <p className="text-sm font-medium text-balance">{notice.title}</p>
-                    <time className="text-xs text-muted-foreground">
-                      {formatDate(notice.publishedAt)}
-                    </time>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <NewsKindBadge kind={item.kind} />
+                        <time dateTime={item.date} className="text-xs text-muted-foreground">
+                          {formatDate(item.date)}
+                        </time>
+                      </div>
+                      <p className="mt-2 font-medium text-balance">{item.title}</p>
+                      <p className="mt-1 max-w-2xl text-sm text-muted-foreground text-pretty">
+                        {item.summary}
+                      </p>
+                    </div>
+                    <ArrowRight className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
                   </Link>
-                ))}
-              </div>
-            </RevealItem>
-          </Reveal>
+                </RevealItem>
+              ))}
+            </Reveal>
+          )}
+
+          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <Link href="/news" className="font-medium hover:underline sm:hidden">
+              View all news →
+            </Link>
+            <Link href="/publications" className="font-medium hover:underline">
+              Browse publications →
+            </Link>
+            <Link href="/join" className="font-medium hover:underline">
+              Open opportunities →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -322,7 +303,7 @@ export default async function HomePage() {
                 size="lg"
                 variant="outline"
                 nativeButton={false}
-                render={<Link href="/notices">See open opportunities</Link>}
+                render={<Link href="/join">See open opportunities</Link>}
               />
             </div>
           </RevealItem>

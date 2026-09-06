@@ -5,8 +5,32 @@ import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/site/avatar";
 import { Prose } from "@/components/site/prose";
+import type { Metadata } from "next";
 import { getPostBySlug } from "@/lib/sanity/fetch";
 import { formatDate } from "@/lib/format-date";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  if (!post) return { title: "Post not found" };
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `/blog/${slug}`,
+      publishedTime: post.publishedAt,
+      images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
+    },
+  };
+}
 
 export default async function BlogPostPage({
   params,
@@ -20,10 +44,10 @@ export default async function BlogPostPage({
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <Link
-        href="/blog"
+        href="/news"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to Blog
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to News
       </Link>
 
       <time className="mt-6 block text-sm text-muted-foreground">

@@ -36,7 +36,7 @@ export default defineType({
       name: "body",
       title: "Body",
       type: "array",
-      of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
+      of: [{ type: "block" }, { type: "bodyImage" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({

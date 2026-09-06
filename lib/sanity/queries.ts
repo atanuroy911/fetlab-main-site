@@ -45,9 +45,16 @@ export const researchGroupBySlugQuery = groq`
 `;
 
 export const peopleListQuery = groq`
-  *[_type == "person"] | order(category asc, order asc) {
-    _id, name, "slug": slug.current, role, affiliation, category, bio, email, website, socials,
-    "photoUrl": photo.asset->url
+  *[_type == "person"] | order(category->order asc, order asc, name asc) {
+    _id, name, "slug": slug.current, role, affiliation, bio, email, website, socials,
+    "photoUrl": photo.asset->url,
+    "category": category->{_id, title, "slug": slug.current, description, order}
+  }
+`;
+
+export const personCategoriesQuery = groq`
+  *[_type == "personCategory"] | order(order asc, title asc) {
+    _id, title, "slug": slug.current, description, order
   }
 `;
 
@@ -102,5 +109,32 @@ export const postsByGroupQuery = groq`
 export const noticesByGroupQuery = groq`
   *[_type == "notice" && isActive != false && relatedGroup->slug.current == $slug] | order(publishedAt desc) {
     _id, title, "slug": slug.current, type, summary, publishedAt, deadline
+  }
+`;
+
+export const galleryAlbumsListQuery = groq`
+  *[_type == "galleryAlbum" && isActive != false] | order(date desc) {
+    _id, title, "slug": slug.current, date, description, location,
+    "coverUrl": coalesce(coverImage.asset->url, images[0].asset->url),
+    "coverLqip": coalesce(coverImage.asset->metadata.lqip, images[0].asset->metadata.lqip),
+    "imageCount": count(images),
+    "relatedGroup": relatedGroup->{title, "slug": slug.current}
+  }
+`;
+
+export const galleryAlbumBySlugQuery = groq`
+  *[_type == "galleryAlbum" && slug.current == $slug][0] {
+    _id, title, "slug": slug.current, date, description, location,
+    "coverUrl": coalesce(coverImage.asset->url, images[0].asset->url),
+    "coverLqip": coalesce(coverImage.asset->metadata.lqip, images[0].asset->metadata.lqip),
+    "imageCount": count(images),
+    "relatedGroup": relatedGroup->{title, "slug": slug.current},
+    "images": images[]{
+      alt, caption,
+      "url": asset->url,
+      "lqip": asset->metadata.lqip,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height
+    }
   }
 `;
