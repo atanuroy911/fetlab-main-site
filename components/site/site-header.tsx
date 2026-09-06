@@ -1,29 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 
+const NAV_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/research", label: "Research" },
+  { href: "/publications", label: "Publications" },
+  { href: "/people", label: "People" },
+  { href: "/blog", label: "Blog" },
+  { href: "/notices", label: "Notices" },
+  { href: "/contact", label: "Contact" },
+];
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const t = useTranslations("Nav");
-
-  const navLinks = [
-    { href: "/about", label: t("about") },
-    { href: "/research", label: t("research") },
-    { href: "/publications", label: t("publications") },
-    { href: "/people", label: t("people") },
-    { href: "/blog", label: t("blog") },
-    { href: "/notices", label: t("notices") },
-    { href: "/contact", label: t("contact") },
-  ];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70">
@@ -40,8 +39,8 @@ export function SiteHeader() {
           <span className="font-heading text-lg font-semibold tracking-tight">FETLAB</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => {
+        <nav className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
               <Link
@@ -60,16 +59,12 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <ThemeToggle />
-          <Button
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/contact">{t("collaborate")}</Link>}
-          />
+          <Button size="sm" nativeButton={false} render={<Link href="/contact">Collaborate</Link>} />
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -91,7 +86,7 @@ export function SiteHeader() {
                 FETLAB
               </SheetTitle>
               <nav className="mt-4 flex flex-col gap-1 px-2">
-                {navLinks.map((link) => (
+                {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -106,7 +101,7 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="mt-2 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-medium text-primary-foreground"
                 >
-                  {t("collaborate")}
+                  Collaborate
                 </Link>
               </nav>
             </SheetContent>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Crimson_Pro } from "next/font/google";
-import { getLocale } from "next-intl/server";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import "./globals.css";
 
@@ -26,16 +25,15 @@ export const metadata: Metadata = {
     "An open, multidisciplinary research, innovation, and collaboration platform exploring emerging technologies and addressing complex challenges.",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
-      lang={locale}
+      lang="en"
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${crimsonPro.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}
         </ThemeProvider>
       </body>

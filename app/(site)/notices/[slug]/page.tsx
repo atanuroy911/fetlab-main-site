@@ -1,7 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { NoticeTypeBadge } from "@/components/site/notice-type-badge";
 import { Prose } from "@/components/site/prose";
@@ -14,7 +13,7 @@ export default async function NoticePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [notice, t] = await Promise.all([getNoticeBySlug(slug), getTranslations("Notices")]);
+  const notice = await getNoticeBySlug(slug);
   if (!notice) notFound();
 
   return (
@@ -23,7 +22,7 @@ export default async function NoticePage({
         href="/notices"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> {t("backToNotices")}
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Notices
       </Link>
 
       <div className="mt-6 flex items-center gap-3">
@@ -38,8 +37,7 @@ export default async function NoticePage({
 
       {notice.deadline && (
         <p className="mt-4 text-sm font-medium">
-          {t("deadline")}:{" "}
-          <span className="text-muted-foreground">{formatDate(notice.deadline)}</span>
+          Deadline: <span className="text-muted-foreground">{formatDate(notice.deadline)}</span>
         </p>
       )}
 
@@ -51,7 +49,7 @@ export default async function NoticePage({
 
       {notice.relatedGroup && (
         <p className="mt-8 text-sm text-muted-foreground">
-          {t("relatedTo")}{" "}
+          Related to{" "}
           <Link
             href={`/research/${notice.relatedGroup.slug}`}
             className="font-medium text-foreground hover:underline"
@@ -67,7 +65,7 @@ export default async function NoticePage({
             nativeButton={false}
             render={
               <a href={notice.applyLink} target="_blank" rel="noopener noreferrer">
-                {t("apply")}
+                Apply / Learn More
               </a>
             }
           />

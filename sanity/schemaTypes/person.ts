@@ -46,6 +46,18 @@ export default defineType({
     defineField({ name: "email", title: "Email", type: "string" }),
     defineField({ name: "website", title: "Website / profile link", type: "url" }),
     defineField({
+      name: "socials",
+      title: "Social links",
+      type: "object",
+      options: { columns: 2 },
+      fields: [
+        defineField({ name: "linkedin", title: "LinkedIn", type: "url" }),
+        defineField({ name: "twitter", title: "X / Twitter", type: "url" }),
+        defineField({ name: "github", title: "GitHub", type: "url" }),
+        defineField({ name: "scholar", title: "Google Scholar", type: "url" }),
+      ],
+    }),
+    defineField({
       name: "order",
       title: "Display order",
       type: "number",

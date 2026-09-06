@@ -18,6 +18,13 @@ export type NoticeDetail = NoticeSummary & {
 
 export type GroupKind = "group" | "initiative" | "forum";
 
+export type Socials = {
+  linkedin?: string | null;
+  twitter?: string | null;
+  github?: string | null;
+  scholar?: string | null;
+};
+
 export type PersonRef = {
   _id: string;
   name: string;
@@ -25,6 +32,9 @@ export type PersonRef = {
   role: string;
   affiliation?: string | null;
   photoUrl?: string | null;
+  email?: string | null;
+  website?: string | null;
+  socials?: Socials | null;
 };
 
 export type ResearchGroupSummary = {
@@ -55,6 +65,9 @@ export type PersonSummary = {
   category: PersonCategory;
   bio?: string | null;
   photoUrl?: string | null;
+  email?: string | null;
+  website?: string | null;
+  socials?: Socials | null;
 };
 
 export type PostAuthor = {

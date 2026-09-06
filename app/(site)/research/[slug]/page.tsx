@@ -1,10 +1,10 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Prose } from "@/components/site/prose";
 import { Avatar } from "@/components/site/avatar";
+import { PersonLinks } from "@/components/site/person-links";
 import { NoticeTypeBadge } from "@/components/site/notice-type-badge";
 import {
   getResearchGroupBySlug,
@@ -15,27 +15,25 @@ import {
 import { formatDate } from "@/lib/format-date";
 import type { GroupKind } from "@/lib/sanity/types";
 
+const KIND_LABEL_FULL: Record<GroupKind, string> = {
+  group: "Research Group",
+  initiative: "Research / Innovation Initiative",
+  forum: "Community Forum",
+};
+
 export default async function ResearchGroupPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [group, t, tPubs, publications, posts, notices] = await Promise.all([
+  const [group, publications, posts, notices] = await Promise.all([
     getResearchGroupBySlug(slug),
-    getTranslations("Research"),
-    getTranslations("Publications"),
     getPublicationsByGroup(slug),
     getPostsByGroup(slug),
     getNoticesByGroup(slug),
   ]);
   if (!group) notFound();
-
-  const kindLabelFull: Record<GroupKind, string> = {
-    group: t("kindGroup"),
-    initiative: t("kindInitiativeFull"),
-    forum: t("kindForumFull"),
-  };
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
@@ -43,12 +41,12 @@ export default async function ResearchGroupPage({
         href="/research"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> {t("backToResearch")}
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Research
       </Link>
 
       <p className="mt-6 flex items-center gap-2 text-sm font-medium tracking-wide text-primary uppercase">
         <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-        {kindLabelFull[group.kind]}
+        {KIND_LABEL_FULL[group.kind]}
       </p>
       <h1 className="mt-2 font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
         {group.title}
@@ -77,16 +75,17 @@ export default async function ResearchGroupPage({
           {group.leaders && group.leaders.length > 0 && (
             <div>
               <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                {group.leaders.length > 1 ? t("groupLeaders") : t("groupLeader")}
+                {group.leaders.length > 1 ? "Group Leaders" : "Group Leader"}
               </h2>
               <ul className="mt-4 space-y-4">
                 {group.leaders.map((p) => (
                   <li key={p._id} className="flex items-center gap-3">
                     <Avatar name={p.name} photoUrl={p.photoUrl} size={40} />
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium">{p.name}</p>
                       <p className="text-sm text-muted-foreground">{p.role}</p>
                     </div>
+                    <PersonLinks email={p.email} website={p.website} socials={p.socials} />
                   </li>
                 ))}
               </ul>
@@ -95,16 +94,17 @@ export default async function ResearchGroupPage({
           {group.members && group.members.length > 0 && (
             <div>
               <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                {t("members")}
+                Members
               </h2>
               <ul className="mt-4 space-y-4">
                 {group.members.map((p) => (
                   <li key={p._id} className="flex items-center gap-3">
                     <Avatar name={p.name} photoUrl={p.photoUrl} size={40} />
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium">{p.name}</p>
                       <p className="text-sm text-muted-foreground">{p.role}</p>
                     </div>
+                    <PersonLinks email={p.email} website={p.website} socials={p.socials} />
                   </li>
                 ))}
               </ul>
@@ -116,7 +116,7 @@ export default async function ResearchGroupPage({
       {publications.length > 0 && (
         <div className="mt-12 border-t border-border pt-10">
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            {tPubs("title")}
+            Publications
           </h2>
           <ul className="mt-4 space-y-3">
             {publications.map((pub) => (
@@ -133,7 +133,7 @@ export default async function ResearchGroupPage({
             href="/publications"
             className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
           >
-            {tPubs("viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+            View all publications <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       )}
@@ -141,7 +141,7 @@ export default async function ResearchGroupPage({
       {posts.length > 0 && (
         <div className="mt-12 border-t border-border pt-10">
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            {t("relatedPosts")}
+            From the Blog
           </h2>
           <ul className="mt-4 space-y-3">
             {posts.map((post) => (
@@ -162,7 +162,7 @@ export default async function ResearchGroupPage({
       {notices.length > 0 && (
         <div className="mt-12 border-t border-border pt-10">
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-            {t("relatedNotices")}
+            Related Notices
           </h2>
           <ul className="mt-4 space-y-3">
             {notices.map((notice) => (
