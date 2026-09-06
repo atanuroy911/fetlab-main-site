@@ -6,6 +6,8 @@ import {
   getFeaturedResearchGroups,
   getPeople,
   getRecentNotices,
+  getRecentPosts,
+  getPublications,
   getResearchGroups,
   getSiteSettings,
 } from "@/lib/sanity/fetch";
@@ -16,13 +18,18 @@ import { formatDate } from "@/lib/format-date";
 export default async function HomePage() {
   const t = await getTranslations("Home");
   const tResearch = await getTranslations("Research");
-  const [settings, groups, allGroups, notices, people] = await Promise.all([
+  const tPubs = await getTranslations("Publications");
+  const tBlog = await getTranslations("Blog");
+  const [settings, groups, allGroups, notices, posts, publications, people] = await Promise.all([
     getSiteSettings(),
     getFeaturedResearchGroups(),
     getResearchGroups(),
     getRecentNotices(),
+    getRecentPosts(),
+    getPublications(),
     getPeople(),
   ]);
+  const recentPublications = publications.slice(0, 3);
 
   const stats = [
     { label: t("statGroups"), value: `${allGroups.length}+` },
@@ -178,45 +185,91 @@ export default async function HomePage() {
         <div className="h-px w-full bg-border" />
       </div>
 
-      {/* Notices */}
+      {/* Latest from FETLAB: publications, blog, notices side by side */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <div className="mb-10">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            {t("latestTitle")}
+          </h2>
+          <p className="mt-2 max-w-xl font-heading text-xl">{t("latestDesc")}</p>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Publications */}
           <div>
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              {t("noticesTitle")}
-            </h2>
-            <p className="mt-2 max-w-xl font-heading text-xl">{t("noticesDesc")}</p>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-heading text-base font-semibold">{tPubs("title")}</h3>
+              <Link href="/publications" className="text-xs font-medium text-foreground hover:underline">
+                {tPubs("viewAll")}
+              </Link>
+            </div>
+            <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
+              {recentPublications.length === 0 ? (
+                <p className="p-4 text-sm text-muted-foreground">{tPubs("empty")}</p>
+              ) : (
+                recentPublications.map((pub) => (
+                  <div key={pub._id} className="p-4">
+                    <p className="text-sm font-medium text-balance">{pub.title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{pub.year}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-          <Link
-            href="/notices"
-            className="hidden shrink-0 text-sm font-medium text-foreground hover:underline sm:block"
-          >
-            {t("viewAllNotices")} →
-          </Link>
+
+          {/* Blog */}
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-heading text-base font-semibold">{tBlog("title")}</h3>
+              <Link href="/blog" className="text-xs font-medium text-foreground hover:underline">
+                {tBlog("viewAll")}
+              </Link>
+            </div>
+            <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
+              {posts.length === 0 ? (
+                <p className="p-4 text-sm text-muted-foreground">{tBlog("empty")}</p>
+              ) : (
+                posts.map((post) => (
+                  <Link
+                    key={post._id}
+                    href={`/blog/${post.slug}`}
+                    className="p-4 transition-colors hover:bg-accent/50"
+                  >
+                    <p className="text-sm font-medium text-balance">{post.title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {formatDate(post.publishedAt)}
+                    </p>
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Notices */}
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-heading text-base font-semibold">{t("noticesTitle")}</h3>
+              <Link href="/notices" className="text-xs font-medium text-foreground hover:underline">
+                {t("viewAllNotices")}
+              </Link>
+            </div>
+            <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
+              {notices.map((notice) => (
+                <Link
+                  key={notice._id}
+                  href={`/notices/${notice.slug}`}
+                  className="flex flex-col gap-1.5 p-4 transition-colors hover:bg-accent/50"
+                >
+                  <NoticeTypeBadge type={notice.type} />
+                  <p className="text-sm font-medium text-balance">{notice.title}</p>
+                  <time className="text-xs text-muted-foreground">
+                    {formatDate(notice.publishedAt)}
+                  </time>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-          {notices.map((notice) => (
-            <Link
-              key={notice._id}
-              href={`/notices/${notice.slug}`}
-              className="flex flex-col gap-2 p-6 transition-colors hover:bg-accent/50 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                <NoticeTypeBadge type={notice.type} />
-                <h3 className="font-medium text-balance">{notice.title}</h3>
-              </div>
-              <time className="shrink-0 text-sm text-muted-foreground">
-                {formatDate(notice.publishedAt)}
-              </time>
-            </Link>
-          ))}
-        </div>
-        <Link
-          href="/notices"
-          className="mt-8 block text-sm font-medium text-foreground hover:underline sm:hidden"
-        >
-          {t("viewAllNotices")} →
-        </Link>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">

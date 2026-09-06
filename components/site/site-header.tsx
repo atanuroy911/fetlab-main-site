@@ -18,7 +18,9 @@ export function SiteHeader() {
   const navLinks = [
     { href: "/about", label: t("about") },
     { href: "/research", label: t("research") },
+    { href: "/publications", label: t("publications") },
     { href: "/people", label: t("people") },
+    { href: "/blog", label: t("blog") },
     { href: "/notices", label: t("notices") },
     { href: "/contact", label: t("contact") },
   ];

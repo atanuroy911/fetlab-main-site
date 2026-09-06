@@ -26,7 +26,9 @@ export function SiteFooter() {
         <nav className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm text-muted-foreground sm:flex sm:flex-wrap">
           <Link href="/about" className="hover:text-foreground">{tNav("about")}</Link>
           <Link href="/research" className="hover:text-foreground">{tNav("research")}</Link>
+          <Link href="/publications" className="hover:text-foreground">{tNav("publications")}</Link>
           <Link href="/people" className="hover:text-foreground">{tNav("people")}</Link>
+          <Link href="/blog" className="hover:text-foreground">{tNav("blog")}</Link>
           <Link href="/notices" className="hover:text-foreground">{tNav("notices")}</Link>
           <Link href="/contact" className="hover:text-foreground">{tNav("contact")}</Link>
         </nav>

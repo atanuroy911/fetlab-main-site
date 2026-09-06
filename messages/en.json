@@ -2,8 +2,10 @@
   "Nav": {
     "about": "About",
     "research": "Research",
+    "publications": "Publications",
     "people": "People",
     "notices": "Notices",
+    "blog": "Blog",
     "contact": "Contact",
     "collaborate": "Collaborate"
   },
@@ -36,6 +38,8 @@
     "learnMore": "Learn more",
     "noticesTitle": "Latest Notices",
     "noticesDesc": "Vacancies, calls for researchers and students, and announcements.",
+    "latestTitle": "Latest from FETLAB",
+    "latestDesc": "Publications, blog posts, and notices from across the network.",
     "viewAllNotices": "View all notices",
     "collaborateTitle": "Collaborate with FETLAB",
     "collaborateDesc": "Researchers · Students · Institutions · Industry · Government · Communities — FETLAB is strengthened by everyone who participates in its ecosystem.",
@@ -82,7 +86,9 @@
     "backToResearch": "Back to Research",
     "groupLeader": "Group Leader",
     "groupLeaders": "Group Leaders",
-    "members": "Members"
+    "members": "Members",
+    "relatedPosts": "From the Blog",
+    "relatedNotices": "Related Notices"
   },
   "People": {
     "eyebrow": "People & Network",
@@ -126,6 +132,32 @@
     "pathway5Body": "Working with communities and practitioners on real-world problems.",
     "pathway6Title": "Knowledge Exchange",
     "pathway6Body": "Seminars, talks, publications, open resources, and events."
+  },
+  "Publications": {
+    "eyebrow": "Publications",
+    "title": "Publications",
+    "description": "Papers, reports, and research outputs from across the FETLAB network.",
+    "empty": "No publications listed yet.",
+    "noMatches": "No publications match this filter.",
+    "allTypes": "All types",
+    "allTopics": "All topics",
+    "typeJournal": "Journal Article",
+    "typeConference": "Conference Paper",
+    "typePreprint": "Preprint",
+    "typeThesis": "Thesis",
+    "typeReport": "Report",
+    "viewPaper": "View paper",
+    "pdf": "PDF",
+    "viewAll": "View all publications"
+  },
+  "Blog": {
+    "eyebrow": "Blog",
+    "title": "FETLAB Blog",
+    "description": "Research notes, field updates, and perspectives from across the FETLAB network.",
+    "empty": "No posts published yet.",
+    "backToBlog": "Back to Blog",
+    "relatedTo": "Related to",
+    "viewAll": "View all posts"
   },
   "ModelLoop": {
     "step1": "Challenge",

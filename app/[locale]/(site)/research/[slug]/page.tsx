@@ -1,11 +1,18 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Prose } from "@/components/site/prose";
 import { Avatar } from "@/components/site/avatar";
-import { getResearchGroupBySlug } from "@/lib/sanity/fetch";
+import { NoticeTypeBadge } from "@/components/site/notice-type-badge";
+import {
+  getResearchGroupBySlug,
+  getPublicationsByGroup,
+  getPostsByGroup,
+  getNoticesByGroup,
+} from "@/lib/sanity/fetch";
+import { formatDate } from "@/lib/format-date";
 import type { GroupKind } from "@/lib/sanity/types";
 
 export default async function ResearchGroupPage({
@@ -14,9 +21,13 @@ export default async function ResearchGroupPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [group, t] = await Promise.all([
+  const [group, t, tPubs, publications, posts, notices] = await Promise.all([
     getResearchGroupBySlug(slug),
     getTranslations("Research"),
+    getTranslations("Publications"),
+    getPublicationsByGroup(slug),
+    getPostsByGroup(slug),
+    getNoticesByGroup(slug),
   ]);
   if (!group) notFound();
 
@@ -27,7 +38,7 @@ export default async function ResearchGroupPage({
   };
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
+    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <Link
         href="/research"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -99,6 +110,70 @@ export default async function ResearchGroupPage({
               </ul>
             </div>
           )}
+        </div>
+      )}
+
+      {publications.length > 0 && (
+        <div className="mt-12 border-t border-border pt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+            {tPubs("title")}
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {publications.map((pub) => (
+              <li key={pub._id}>
+                <p className="font-medium text-balance">{pub.title}</p>
+                <p className="text-sm text-muted-foreground">
+                  {pub.authors.join(", ")} · {pub.year}
+                  {pub.venue ? ` · ${pub.venue}` : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href="/publications"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
+          >
+            {tPubs("viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      )}
+
+      {posts.length > 0 && (
+        <div className="mt-12 border-t border-border pt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+            {t("relatedPosts")}
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {posts.map((post) => (
+              <li key={post._id}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="font-medium text-balance hover:underline"
+                >
+                  {post.title}
+                </Link>
+                <p className="text-sm text-muted-foreground">{formatDate(post.publishedAt)}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {notices.length > 0 && (
+        <div className="mt-12 border-t border-border pt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+            {t("relatedNotices")}
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {notices.map((notice) => (
+              <li key={notice._id} className="flex items-center gap-3">
+                <NoticeTypeBadge type={notice.type} />
+                <Link href={`/notices/${notice.slug}`} className="font-medium hover:underline">
+                  {notice.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </article>

@@ -57,6 +57,44 @@ export type PersonSummary = {
   photoUrl?: string | null;
 };
 
+export type PostAuthor = {
+  name: string;
+  slug: string;
+  role?: string | null;
+  photoUrl?: string | null;
+};
+
+export type PostSummary = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  publishedAt: string;
+  tags?: string[];
+  coverImageUrl?: string | null;
+  author?: PostAuthor | null;
+};
+
+export type PostDetail = PostSummary & {
+  body?: unknown;
+  relatedGroup?: { title: string; slug: string } | null;
+};
+
+export type PublicationType = "journal" | "conference" | "preprint" | "thesis" | "report";
+
+export type Publication = {
+  _id: string;
+  title: string;
+  authors: string[];
+  year: number;
+  venue?: string | null;
+  type: PublicationType;
+  tags?: string[];
+  doiUrl?: string | null;
+  pdfUrl?: string | null;
+  relatedGroup?: { title: string; slug: string } | null;
+};
+
 export type SiteSettings = {
   title?: string;
   heroHeadline?: string;

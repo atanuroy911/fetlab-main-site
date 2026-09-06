@@ -2,8 +2,10 @@
   "Nav": {
     "about": "Om oss",
     "research": "Forskning",
+    "publications": "Publikationer",
     "people": "Medlemmar",
     "notices": "Meddelanden",
+    "blog": "Blogg",
     "contact": "Kontakt",
     "collaborate": "Samarbeta"
   },
@@ -36,6 +38,8 @@
     "learnMore": "Läs mer",
     "noticesTitle": "Senaste meddelanden",
     "noticesDesc": "Lediga tjänster, utlysningar för forskare och studenter samt tillkännagivanden.",
+    "latestTitle": "Senaste från FETLAB",
+    "latestDesc": "Publikationer, blogginlägg och meddelanden från hela nätverket.",
     "viewAllNotices": "Se alla meddelanden",
     "collaborateTitle": "Samarbeta med FETLAB",
     "collaborateDesc": "Forskare · Studenter · Institutioner · Näringsliv · Myndigheter · Samhällen — FETLAB stärks av alla som deltar i dess ekosystem.",
@@ -82,7 +86,9 @@
     "backToResearch": "Tillbaka till forskning",
     "groupLeader": "Gruppledare",
     "groupLeaders": "Gruppledare",
-    "members": "Medlemmar"
+    "members": "Medlemmar",
+    "relatedPosts": "Från bloggen",
+    "relatedNotices": "Relaterade meddelanden"
   },
   "People": {
     "eyebrow": "Medlemmar & nätverk",
@@ -126,6 +132,32 @@
     "pathway5Body": "Att arbeta med samhällen och praktiker kring verkliga problem.",
     "pathway6Title": "Kunskapsutbyte",
     "pathway6Body": "Seminarier, föredrag, publikationer, öppna resurser och evenemang."
+  },
+  "Publications": {
+    "eyebrow": "Publikationer",
+    "title": "Publikationer",
+    "description": "Artiklar, rapporter och forskningsresultat från hela FETLAB-nätverket.",
+    "empty": "Inga publikationer listade ännu.",
+    "noMatches": "Inga publikationer matchar det här filtret.",
+    "allTypes": "Alla typer",
+    "allTopics": "Alla ämnen",
+    "typeJournal": "Tidskriftsartikel",
+    "typeConference": "Konferensbidrag",
+    "typePreprint": "Preprint",
+    "typeThesis": "Avhandling",
+    "typeReport": "Rapport",
+    "viewPaper": "Visa artikel",
+    "pdf": "PDF",
+    "viewAll": "Se alla publikationer"
+  },
+  "Blog": {
+    "eyebrow": "Blogg",
+    "title": "FETLAB-bloggen",
+    "description": "Forskningsanteckningar, uppdateringar från fältet och perspektiv från hela FETLAB-nätverket.",
+    "empty": "Inga inlägg publicerade ännu.",
+    "backToBlog": "Tillbaka till bloggen",
+    "relatedTo": "Relaterat till",
+    "viewAll": "Se alla inlägg"
   },
   "ModelLoop": {
     "step1": "Utmaning",

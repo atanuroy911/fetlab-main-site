@@ -1,6 +1,8 @@
 import type {
   NoticeSummary,
   PersonSummary,
+  PostSummary,
+  Publication,
   ResearchGroupSummary,
   SiteSettings,
 } from "./types";
@@ -134,3 +136,17 @@ export const fallbackNotices: NoticeSummary[] = [
     publishedAt: new Date().toISOString(),
   },
 ];
+
+export const fallbackPosts: PostSummary[] = [
+  {
+    _id: "fallback-post-welcome",
+    title: "Welcome to the FETLAB Blog",
+    slug: "welcome-to-the-fetlab-blog",
+    excerpt:
+      "Research notes, field updates, and perspectives from across the FETLAB network will be published here.",
+    publishedAt: new Date().toISOString(),
+    tags: ["Announcement"],
+  },
+];
+
+export const fallbackPublications: Publication[] = [];

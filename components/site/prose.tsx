@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { urlFor } from "@/lib/sanity/image";
 
 const components: PortableTextComponents = {
   block: {
@@ -9,6 +11,19 @@ const components: PortableTextComponents = {
   list: {
     bullet: ({ children }) => <ul className="mt-4 list-disc space-y-1 pl-5">{children}</ul>,
     number: ({ children }) => <ol className="mt-4 list-decimal space-y-1 pl-5">{children}</ol>,
+  },
+  types: {
+    image: ({ value }) => (
+      <span className="mt-6 block overflow-hidden rounded-lg border border-border">
+        <Image
+          src={urlFor(value).width(1200).url()}
+          alt={value.alt ?? ""}
+          width={1200}
+          height={800}
+          className="h-auto w-full object-cover"
+        />
+      </span>
+    ),
   },
 };
 

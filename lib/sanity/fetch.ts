@@ -8,10 +8,19 @@ import {
   researchGroupBySlugQuery,
   peopleListQuery,
   siteSettingsQuery,
+  postsListQuery,
+  recentPostsQuery,
+  postBySlugQuery,
+  publicationsListQuery,
+  publicationsByGroupQuery,
+  postsByGroupQuery,
+  noticesByGroupQuery,
 } from "./queries";
 import {
   fallbackNotices,
   fallbackPeople,
+  fallbackPosts,
+  fallbackPublications,
   fallbackResearchGroups,
   fallbackSiteSettings,
 } from "./fallback";
@@ -19,6 +28,9 @@ import type {
   NoticeDetail,
   NoticeSummary,
   PersonSummary,
+  PostDetail,
+  PostSummary,
+  Publication,
   ResearchGroupDetail,
   ResearchGroupSummary,
   SiteSettings,
@@ -34,6 +46,12 @@ function fallbackNoticeDetail(slug: string): NoticeDetail | null {
   const notice = fallbackNotices.find((n) => n.slug === slug);
   if (!notice) return null;
   return { ...notice, relatedGroup: null, applyLink: null };
+}
+
+function fallbackPostDetail(slug: string): PostDetail | null {
+  const post = fallbackPosts.find((p) => p.slug === slug);
+  if (!post) return null;
+  return { ...post, relatedGroup: null };
 }
 
 async function safeFetch<T>(query: string, params: Record<string, unknown>, fallback: T): Promise<T> {
@@ -78,3 +96,23 @@ export const getResearchGroupBySlug = (slug: string) =>
   );
 
 export const getPeople = () => safeFetch<PersonSummary[]>(peopleListQuery, {}, fallbackPeople);
+
+export const getPosts = () => safeFetch<PostSummary[]>(postsListQuery, {}, fallbackPosts);
+
+export const getRecentPosts = () =>
+  safeFetch<PostSummary[]>(recentPostsQuery, {}, fallbackPosts.slice(0, 3));
+
+export const getPostBySlug = (slug: string) =>
+  safeFetch<PostDetail | null>(postBySlugQuery, { slug }, fallbackPostDetail(slug));
+
+export const getPublications = () =>
+  safeFetch<Publication[]>(publicationsListQuery, {}, fallbackPublications);
+
+export const getPublicationsByGroup = (slug: string) =>
+  safeFetch<Publication[]>(publicationsByGroupQuery, { slug }, []);
+
+export const getPostsByGroup = (slug: string) =>
+  safeFetch<PostSummary[]>(postsByGroupQuery, { slug }, []);
+
+export const getNoticesByGroup = (slug: string) =>
+  safeFetch<NoticeSummary[]>(noticesByGroupQuery, { slug }, []);
